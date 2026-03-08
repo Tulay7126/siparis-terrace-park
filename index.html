@@ -3,96 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Terrace Park</title>
+    <title>Terrace Park Sipariş</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #0a0a0a; color: white; font-family: sans-serif; overflow-y: auto; height: 100vh; }
+        body { background-color: #121212; color: white; font-family: sans-serif; text-align: center; padding: 15px; }
+        .adim { display: block; margin-bottom: 20px; }
+        .gizli { display: none; }
         
-        /* BLOKLARIN DÜZENİ */
-        #ana-liste { display: block; padding: 10px; }
-        .blok-konteyner { margin-bottom: 20px; background: #111; border: 1px solid #333; border-radius: 8px; padding: 10px; }
-        h2 { font-size: 22px; text-align: center; color: #ffcc00; margin-bottom: 10px; border-bottom: 1px solid #333; }
-
-        /* BUTONLAR: KOCAMAN VE BASMASI KOLAY */
-        .daire-btn { 
-            width: 100%; height: 60px; margin-bottom: 8px; font-size: 20px; font-weight: bold;
-            background: #262626; color: #ccc; border: 2px solid #444; border-radius: 10px; 
+        /* KOCAMAN BUTONLAR */
+        button { 
+            padding: 20px; margin: 10px; font-size: 20px; font-weight: bold;
+            background-color: #222; color: #ffcc00; border: 3px solid #ffcc00; border-radius: 12px;
+            cursor: pointer; width: 90%; max-width: 400px;
         }
+        button:active { background-color: #ffcc00; color: #000; }
         
-        /* SEÇİM PANELİ */
-        #modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 999; }
-        .modal-icerik { background: #222; padding: 30px; border-radius: 20px; border: 2px solid #ffcc00; text-align: center; width: 90%; }
-        .urun-secenekler { display: flex; gap: 15px; margin: 25px 0; }
-        .urun-btn { flex: 1; padding: 30px; font-size: 24px; font-weight: bold; cursor: pointer; background: #333; color: white; border: 4px solid #444; border-radius: 15px; }
-        .tamam-btn { background: #28a745; color: white; width: 100%; padding: 20px; border: none; border-radius: 12px; font-size: 26px; font-weight: bold; }
+        input { padding: 15px; font-size: 22px; width: 120px; border-radius: 10px; text-align: center; margin-bottom: 10px; }
+        #sonuc { background: #1a1a1a; padding: 25px; border-radius: 20px; border: 3px solid #28a745; }
     </style>
 </head>
 <body>
-    <div id="ana-liste"></div>
 
-    <div id="modal">
-        <div class="modal-icerik">
-            <h3 id="secim-baslik" style="font-size: 26px; color: #ffcc00; margin-bottom: 20px;">SEÇİM YAPIN</h3>
-            <div class="urun-secenekler">
-                <button class="urun-btn" onclick="urunSec('Su', this)">💧 SU</button>
-                <button class="urun-btn" onclick="urunSec('Ekmek', this)">🍞 EKMEK</button>
-            </div>
-            <button class="tamam-btn" onclick="tamamDe()">TAMAM</button>
+    <h1>🏢 Terrace Park</h1>
+
+    <div id="adim1" class="adim">
+        <h3>BLOĞU SEÇİN:</h3>
+        <button onclick="adimAtla(1, 2, 'A')">A BLOK</button>
+        <button onclick="adimAtla(1, 2, 'B')">B BLOK</button>
+        <button onclick="adimAtla(1, 2, 'C')">C BLOK</button>
+        <button onclick="adimAtla(1, 2, 'D')">D BLOK</button>
+        <button onclick="adimAtla(1, 2, 'E')">E BLOK</button>
+        <button onclick="adimAtla(1, 2, 'F')">F BLOK</button>
+    </div>
+
+    <div id="adim2" class="adim gizli">
+        <h2 id="blok-yazisi" style="color:#ffcc00;"></h2>
+        <p>Daire Numarasını Yazın:</p>
+        <input type="number" id="daire-input" placeholder="No">
+        <br>
+        <button onclick="daireKaydet()">DAİREYİ ONAYLA</button>
+        <button onclick="iptal()" style="border-color:red; color:red;">VAZGEÇ</button>
+    </div>
+
+    <div id="adim3" class="adim gizli">
+        <h2 id="ozet-yazisi"></h2>
+        <button onclick="final('SU')">💧 SU GÖNDER</button>
+        <button onclick="final('EKMEK')">🍞 EKMEK GÖNDER</button>
+        <br>
+        <button onclick="iptal()" style="border-color:red; color:red;">VAZGEÇ</button>
+    </div>
+
+    <div id="adim4" class="adim gizli">
+        <div id="sonuc">
+            <h2 style="color:#28a745;">SİPARİŞ GİTTİ! ✅</h2>
+            <p id="mesaj-yazisi" style="font-size:22px; margin:15px 0;"></p>
+            <button onclick="location.reload()" style="background:#28a745; color:white; border:none;">YENİ SİPARİŞ VER</button>
         </div>
     </div>
 
     <script>
-        // REDMİ 14C KONTROLÜ
-        const isTulayAdmin = navigator.userAgent.includes("Redmi 14C");
-        let secilenBlok = "", secilenDaire = "", secilenUrun = "";
+        let secilenBlok = "";
+        let secilenDaire = "";
 
-        function secimAc(blok, daire) {
-            secilenBlok = blok; secilenDaire = daire;
-            document.getElementById('secim-baslik').innerText = blok + daire + " SEÇİMİ";
-            document.getElementById('modal').style.display = 'flex';
-            if (Notification.permission !== "granted") Notification.requestPermission();
+        // Sayfa açılır açılmaz bildirim izni iste
+        window.onload = function() {
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+        };
+
+        function adimAtla(suanki, sonraki, veri) {
+            if(veri) secilenBlok = veri;
+            document.getElementById('adim' + suanki).classList.add('gizli');
+            document.getElementById('adim' + sonraki).classList.remove('gizli');
+            if(veri) document.getElementById('blok-yazisi').innerText = veri + " BLOK";
         }
 
-        function urunSec(urun, btn) {
-            secilenUrun = urun;
-            document.querySelectorAll('.urun-btn').forEach(b => b.style.borderColor = '#444');
-            btn.style.borderColor = '#ffcc00';
+        function daireKaydet() {
+            secilenDaire = document.getElementById('daire-input').value;
+            if(!secilenDaire) { alert("Lütfen daire numarasını yazın!"); return; }
+            document.getElementById('ozet-yazisi').innerText = secilenBlok + " Blok Daire " + secilenDaire;
+            adimAtla(2, 3);
         }
 
-        function tamamDe() {
-            if (!secilenUrun) { alert("Lütfen ürün seçin!"); return; }
+        function final(urun) {
+            const tamMesaj = secilenBlok + " Blok No " + secilenDaire + ": " + urun + " İSTİYOR!";
             
-            // BİLDİRİM
+            // 🔔 BİLDİRİM BURADA TETİKLENİR
             if (Notification.permission === "granted") {
-                new Notification("TERRACE PARK", {
-                    body: secilenBlok + " Blok Daire " + secilenDaire + ": " + secilenUrun.toUpperCase() + " istiyor!",
+                new Notification("TERRACE PARK SİPARİŞ", {
+                    body: tamMesaj,
                     icon: "https://cdn-icons-png.flaticon.com/512/3502/3502214.png"
                 });
             }
+
+            // Ekranda göster
+            document.getElementById('adim3').classList.add('gizli');
+            document.getElementById('adim4').classList.remove('gizli');
+            document.getElementById('mesaj-yazisi').innerText = tamMesaj;
             
-            document.getElementById('modal').style.display = 'none';
-            secilenUrun = "";
-            alert("Sipariş Tamam!");
+            // Eski usul garanti uyarı
+            alert("BİLDİRİM GÖNDERİLDİ: " + tamMesaj);
         }
 
-        // DAİRELERİ ALT ALTA DİZ (En kolayı bu)
-        document.addEventListener('DOMContentLoaded', () => {
-            const anaListe = document.getElementById('ana-liste');
-            ['A', 'B', 'C', 'D', 'E', 'F'].forEach(ad => {
-                const adet = (ad === 'E' || ad === 'F') ? 67 : 46;
-                const blokDiv = document.createElement('div');
-                blokDiv.className = 'blok-konteyner';
-                blokDiv.innerHTML = '<h2>' + ad + ' BLOK</h2>';
-                for (let i = 1; i <= adet; i++) {
-                    const btn = document.createElement('button');
-                    btn.className = 'daire-btn';
-                    btn.innerText = ad + i;
-                    btn.onclick = () => secimAc(ad, i);
-                    blokDiv.appendChild(btn);
-                }
-                anaListe.appendChild(blokDiv);
-            });
-        });
+        function iptal() {
+            location.reload();
+        }
     </script>
 </body>
 </html>
