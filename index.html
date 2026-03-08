@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terrace Park - Merkez Panel</title>
+    <style>
+        /* TAM ORTALI DECO */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: sans-serif; background-color: #f4f4f4; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            min-height: 100vh; transition: 0.5s; text-align: center;
+        }
+        .panel { 
+            background: white; padding: 30px; border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 90%; max-width: 400px;
+        }
+        .gizli { display: none; }
+        
+        /* BUTON SÜSLERİ */
+        button { cursor: pointer; border-radius: 8px; font-weight: bold; transition: 0.2s; }
+        .renk-btn { padding: 8px 15px; border: none; color: white; margin-bottom: 20px; }
+        .blok-btn, .daire-btn, .urun-btn { 
+            margin: 5px; padding: 12px; border: 1px solid #ddd; background: #eee; font-size: 14px;
+        }
+        .daire-btn { width: 50px; height: 50px; }
+        .urun-btn { font-size: 20px; padding: 20px; width: 120px; }
+        .tamam-btn { 
+            background: #27ae60; color: white; padding: 15px 40px; 
+            border: none; margin-top: 20px; font-size: 18px; width: 100%;
+        }
+        
+        /* DAİRE LİSTESİ İÇİN MERKEZİ KUTU */
+        #daire-butonlar { 
+            display: flex; flex-wrap: wrap; justify-content: center; 
+            max-height: 250px; overflow-y: auto; margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="renk-panel">
+        <button class="renk-btn" style="background:#34495e" onclick="bgDegis('#34495e')">Koyu</button>
+        <button class="renk-btn" style="background:#f4f4f4; color:black; border:1px solid #ddd" onclick="bgDegis('#f4f4f4')">Açık</button>
+    </div>
+
+    <div class="panel">
+        <h1 style="margin-bottom:20px;">🏢 Terrace Park</h1>
+        
+        <div id="adim1">
+            <h3 style="margin-bottom:15px;">Blok Seçin</h3>
+            <div id="blok-butonlar"></div>
+        </div>
+
+        <div id="adim2" class="gizli">
+            <h3 id="blok-baslik" style="margin-bottom:15px;"></h3>
+            <div id="daire-butonlar"></div>
+            <button onclick="adimGeri(1)" style="background:none; border:none; color:blue; text-decoration:underline;">⬅ Geri Dön</button>
+        </div>
+
+        <div id="adim3" class="gizli">
+            <h3 id="daire-baslik" style="margin-bottom:20px;"></h3>
+            <div style="display:flex; justify-content:center; gap:10px;">
+                <button class="urun-btn" onclick="urunSec('Su')">💧 SU</button>
+                <button class="urun-btn" onclick="urunSec('Ekmek')">🍞 EKMEK</button>
+            </div>
+            <p id="ozet" style="margin-top:20px; font-weight:bold;"></p>
+            <button id="onay-btn" class="tamam-btn gizli" onclick="siparisTamamla()">TAMAM</button>
+            <br>
+            <button onclick="adimGeri(2)" style="background:none; border:none; color:blue; text-decoration:underline; margin-top:15px;">⬅ Geri Dön</button>
+        </div>
+    </div>
+
+    <script src="terracesiparis.js"></script>
+</body>
+</html>
