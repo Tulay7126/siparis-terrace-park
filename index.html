@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Terrace Park Komuta Merkezi</title>
     <style>
+        /* GENEL TASARIM VE RENKLER */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             background: #0a0a0a; color: white; font-family: sans-serif; 
@@ -13,16 +14,18 @@
         .header { background: #1a1a1a; padding: 10px; text-align: center; border-bottom: 2px solid #ffcc00; }
         h1 { font-size: 18px; color: #ffcc00; }
 
-        /* 1.5 KAT GENİŞLİK VE TAM EKRAN AYARI */
+        /* DAİRE LİSTESİ (1.5 KAT GENİŞLİK AYARI) */
         #ana-liste { display: flex; flex: 1; gap: 2px; padding: 2px; height: 90vh; }
         .blok-konteyner { flex: 1; display: flex; flex-direction: column; background: #111; border: 1px solid #333; }
-        h2 { font-size: 14px; text-align: center; background: #222; padding: 5px; }
+        h2 { font-size: 14px; text-align: center; background: #222; padding: 5px; color: #ffcc00; }
 
+        /* DAİRE BUTONLARI */
         .daire-btn { 
-            flex: 1; margin: 1px; font-size: 12px; font-weight: bold;
+            flex: 1; margin: 1px; font-size: 11px; font-weight: bold;
             background: #262626; color: #ccc; border: 1px solid #444; 
             cursor: pointer; border-radius: 4px;
         }
+        .daire-btn:active { background: #444; }
 
         /* SEÇİM PANELİ (MODAL) */
         #modal { 
@@ -43,7 +46,7 @@
     </style>
 </head>
 <body>
-    <div class="header"><h1>🏢 Terrace Park Komuta Merkezi</h1></div>
+    <div class="header"><h1>🏢 Terrace Park Komuta</h1></div>
     <div id="ana-liste"></div>
 
     <div id="modal">
@@ -60,3 +63,4 @@
     <script src="terracesiparis.js"></script>
 </body>
 </html>
+2. terr
