@@ -1,101 +1,72 @@
-// 1. HAFIZA VE AYARLAR
-let secilenBlok = "";
-let secilenDaire = "";
-let secilenUrun = "";
+// REDMİ 14C VE ADMİN AYARI
+const isTulayAdmin = navigator.userAgent.includes("Redmi 14C");
+let secilenBlok = "", secilenDaire = "", secilenUrun = "";
 
-// 2. BİLDİRİM İZNİ İSTE (SİTE AÇILINCA)
-if (Notification.permission !== "granted") {
-    Notification.requestPermission();
-}
-
-// 3. ARKA PLAN DEĞİŞTİRME
-function bgDegis(renk) {
-    document.body.style.backgroundColor = renk;
-}
-
-// 4. ADIMLARI YÖNETEN FONKSİYON
-function adimGeri(adim) {
-    document.getElementById('adim1').classList.add('gizli');
-    document.getElementById('adim2').classList.add('gizli');
-    document.getElementById('adim3').classList.add('gizli');
-    document.getElementById('adim' + adim).classList.remove('gizli');
-}
-
-// 5. BLOK SEÇME İŞLEMİ
-function blokSec(ad, adet) {
-    secilenBlok = ad;
-    document.getElementById('blok-baslik').innerText = ad + " Blok - Daire Seç";
-    const dKutusu = document.getElementById('daire-butonlar');
-    dKutusu.innerHTML = ""; 
-
-    for (let i = 1; i <= adet; i++) {
-        const btn = document.createElement('button');
-        btn.className = 'daire-btn';
-        btn.innerText = i;
-        btn.onclick = () => daireSec(i);
-        dKutusu.appendChild(btn);
+// BİLDİRİM İZNİ OTOMATİĞİ
+function izinIste() {
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
     }
-    adimGeri(2);
 }
 
-// 6. DAİRE SEÇME İŞLEMİ
-function daireSec(no) {
-    secilenDaire = no;
-    document.getElementById('daire-baslik').innerText = secilenBlok + " Blok Daire " + no;
-    secilenUrun = "";
-    document.getElementById('ozet').innerText = "";
-    document.getElementById('onay-btn').classList.add('gizli');
-    adimGeri(3);
+// GÜNLÜK 7 HAK SINIRI
+function hakKontrol() {
+    if (isTulayAdmin) return true;
+    let data = JSON.parse(localStorage.getItem('tp_hak')) || { gun: new Date().toDateString(), adet: 0 };
+    if (data.gun !== new Date().toDateString()) data = { gun: new Date().toDateString(), adet: 0 };
+    return data.adet < 7;
 }
 
-// 7. ÜRÜN SEÇME (💧/🍞)
-function urunSec(urun) {
+function secimAc(blok, daire) {
+    if (!hakKontrol()) { alert("Günlük 7 hakkınız doldu!"); return; }
+    secilenBlok = blok; secilenDaire = daire;
+    document.getElementById('secim-baslik').innerText = blok + daire + " - SEÇİM YAP";
+    document.getElementById('modal').style.display = 'flex';
+    izinIste();
+}
+
+function urunSec(urun, btn) {
     secilenUrun = urun;
-    document.getElementById('ozet').innerText = "Seçilen: " + urun;
-    document.getElementById('onay-btn').classList.remove('gizli');
+    document.querySelectorAll('.urun-btn').forEach(b => b.style.borderColor = '#444');
+    btn.style.borderColor = '#ffcc00';
 }
 
-// 8. TAMAM DEYİNCE ÇALIŞACAK GARANTİ FONKSİYON
-function siparisTamamla() {
-    const mesaj = secilenBlok + " " + secilenDaire + " - " + secilenUrun.toUpperCase();
+function tamamDe() {
+    if (!secilenUrun) { alert("Lütfen ürün seçin!"); return; }
     
-    // Önce bildirim göndermeyi dene
+    // BİLDİRİMİ GÖNDER
     if (Notification.permission === "granted") {
-        try {
-            new Notification("Terrace Park", {
-                body: mesaj + " siparişi iletildi!",
-                icon: "https://cdn-icons-png.flaticon.com/512/3502/3502214.png"
-            });
-        } catch (e) {
-            console.log("Bildirim gönderilemedi, alert devrede.");
-        }
+        new Notification("TERRACE PARK", {
+            body: secilenBlok + " Blok Daire " + secilenDaire + ": " + secilenUrun.toUpperCase() + "!",
+            icon: "https://cdn-icons-png.flaticon.com/512/3502/3502214.png"
+        });
     }
-    
-    // REDMI 14C İÇİN GARANTİ: Ekrana mutlaka bu uyarıyı çıkar
-    alert("SİPARİŞ TAMAM: " + mesaj);
-    
-    // Her şeyi başa sar ve temizle
-    adimGeri(1);
+
+    if (!isTulayAdmin) {
+        let data = JSON.parse(localStorage.getItem('tp_hak')) || { gun: new Date().toDateString(), adet: 0 };
+        data.adet++;
+        localStorage.setItem('tp_hak', JSON.stringify(data));
+    }
+
+    document.getElementById('modal').style.display = 'none';
     secilenUrun = "";
-    document.getElementById('onay-btn').classList.add('gizli');
-    document.getElementById('ozet').innerText = "";
 }
 
-// 9. BAŞLANGIÇTA BLOKLARI DİZ (A-D 46, E-F 67)
+// DAİRELERİ OTOMATİK DİZ
 document.addEventListener('DOMContentLoaded', () => {
-    const bloklar = [
-        { ad: 'A', adet: 46 }, { ad: 'B', adet: 46 },
-        { ad: 'C', adet: 46 }, { ad: 'D', adet: 46 },
-        { ad: 'E', adet: 67 }, { ad: 'F', adet: 67 }
-    ];
-
-    const bKutusu = document.getElementById('blok-butonlar');
-    bloklar.forEach(b => {
-        const btn = document.createElement('button');
-        btn.className = 'blok-btn';
-        btn.style.width = "80%"; 
-        btn.innerText = b.ad + " BLOK";
-        btn.onclick = () => blokSec(b.ad, b.adet);
-        bKutusu.appendChild(btn);
+    const anaListe = document.getElementById('ana-liste');
+    ['A', 'B', 'C', 'D', 'E', 'F'].forEach(ad => {
+        const adet = (ad === 'E' || ad === 'F') ? 67 : 46;
+        const blokKutusu = document.createElement('div');
+        blokKutusu.className = 'blok-konteyner';
+        blokKutusu.innerHTML = '<h2>' + ad + '</h2>';
+        for (let i = 1; i <= adet; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'daire-btn';
+            btn.innerText = ad + i;
+            btn.onclick = function() { secimAc(ad, i); };
+            blokKutusu.appendChild(btn);
+        }
+        anaListe.appendChild(blokKutusu);
     });
 });
