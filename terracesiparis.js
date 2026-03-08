@@ -3,7 +3,7 @@ let secilenBlok = "";
 let secilenDaire = "";
 let secilenUrun = "";
 
-// 2. BİLDİRİM İZNİ İSTE
+// 2. BİLDİRİM İZNİ İSTE (SİTE AÇILINCA)
 if (Notification.permission !== "granted") {
     Notification.requestPermission();
 }
@@ -26,7 +26,7 @@ function blokSec(ad, adet) {
     secilenBlok = ad;
     document.getElementById('blok-baslik').innerText = ad + " Blok - Daire Seç";
     const dKutusu = document.getElementById('daire-butonlar');
-    dKutusu.innerHTML = ""; // İçini temizle
+    dKutusu.innerHTML = ""; 
 
     for (let i = 1; i <= adet; i++) {
         const btn = document.createElement('button');
@@ -55,20 +55,30 @@ function urunSec(urun) {
     document.getElementById('onay-btn').classList.remove('gizli');
 }
 
-// 8. TAMAM DEYİNCE BİLDİRİM ATMA
+// 8. TAMAM DEYİNCE ÇALIŞACAK GARANTİ FONKSİYON
 function siparisTamamla() {
-    if (Notification.permission === "granted") {
-        new Notification("Terrace Park", {
-            body: secilenBlok + " Blok Daire " + secilenDaire + " - " + secilenUrun.toUpperCase() + " istiyor!",
-            icon: "https://cdn-icons-png.flaticon.com/512/3502/3502214.png"
-        });
-    }
-    alert("Sipariş Alındı! " + secilenBlok + " " + secilenDaire + " - " + secilenUrun);
+    const mesaj = secilenBlok + " " + secilenDaire + " - " + secilenUrun.toUpperCase();
     
-    // Her şeyi başa sar
+    // Önce bildirim göndermeyi dene
+    if (Notification.permission === "granted") {
+        try {
+            new Notification("Terrace Park", {
+                body: mesaj + " siparişi iletildi!",
+                icon: "https://cdn-icons-png.flaticon.com/512/3502/3502214.png"
+            });
+        } catch (e) {
+            console.log("Bildirim gönderilemedi, alert devrede.");
+        }
+    }
+    
+    // REDMI 14C İÇİN GARANTİ: Ekrana mutlaka bu uyarıyı çıkar
+    alert("SİPARİŞ TAMAM: " + mesaj);
+    
+    // Her şeyi başa sar ve temizle
     adimGeri(1);
     secilenUrun = "";
     document.getElementById('onay-btn').classList.add('gizli');
+    document.getElementById('ozet').innerText = "";
 }
 
 // 9. BAŞLANGIÇTA BLOKLARI DİZ (A-D 46, E-F 67)
@@ -83,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bloklar.forEach(b => {
         const btn = document.createElement('button');
         btn.className = 'blok-btn';
-        btn.style.width = "80%"; // Blok butonları biraz geniş dursun
+        btn.style.width = "80%"; 
         btn.innerText = b.ad + " BLOK";
         btn.onclick = () => blokSec(b.ad, b.adet);
         bKutusu.appendChild(btn);
