@@ -3,111 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Terrace Park Sipariş</title>
+    <title>Terrace Park Komuta</title>
     <style>
-        body { background-color: #121212; color: white; font-family: sans-serif; text-align: center; padding: 15px; }
-        .adim { display: block; margin-bottom: 20px; }
-        .gizli { display: none; }
-        
-        /* KOCAMAN BUTONLAR */
-        button { 
-            padding: 20px; margin: 10px; font-size: 20px; font-weight: bold;
-            background-color: #222; color: #ffcc00; border: 3px solid #ffcc00; border-radius: 12px;
-            cursor: pointer; width: 90%; max-width: 400px;
+        /* HER ŞEYİ ORTALAYAN TASARIM */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: #0a0a0a; color: white; font-family: sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            min-height: 100vh; text-align: center; padding: 20px;
         }
-        button:active { background-color: #ffcc00; color: #000; }
         
-        input { padding: 15px; font-size: 22px; width: 120px; border-radius: 10px; text-align: center; margin-bottom: 10px; }
-        #sonuc { background: #1a1a1a; padding: 25px; border-radius: 20px; border: 3px solid #28a745; }
+        .kutu { 
+            background: #1a1a1a; padding: 30px; border-radius: 20px; 
+            border: 2px solid #ffcc00; width: 100%; max-width: 400px; 
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.2);
+        }
+
+        h1 { color: #ffcc00; margin-bottom: 20px; font-size: 24px; }
+        h3 { margin-bottom: 15px; color: #ccc; }
+
+        /* KOCAMAN BUTONLAR VE SEMBOLLER */
+        button { 
+            width: 100%; padding: 20px; margin: 10px 0; font-size: 20px; font-weight: bold;
+            background: #262626; color: #ffcc00; border: 2px solid #ffcc00; border-radius: 12px;
+            cursor: pointer; transition: 0.2s;
+        }
+        button:active { background: #ffcc00; color: #000; }
+
+        input { 
+            width: 100%; padding: 15px; font-size: 24px; text-align: center;
+            border-radius: 10px; border: 2px solid #444; background: #000; color: white;
+            margin-bottom: 15px;
+        }
+
+        .gizli { display: none; }
+        .tamam-btn { background: #28a745; color: white; border: none; font-size: 24px; }
+        .vazgec-btn { background: transparent; border-color: #ff4444; color: #ff4444; margin-top: 10px; padding: 10px; font-size: 16px; }
+
+        /* SEMBOLLER İÇİN ÖZEL STİL */
+        .sembol { font-size: 40px; margin-bottom: 10px; display: block; }
     </style>
 </head>
 <body>
 
-    <h1>🏢 Terrace Park</h1>
-
-    <div id="adim1" class="adim">
-        <h3>BLOĞU SEÇİN:</h3>
-        <button onclick="adimAtla(1, 2, 'A')">A BLOK</button>
-        <button onclick="adimAtla(1, 2, 'B')">B BLOK</button>
-        <button onclick="adimAtla(1, 2, 'C')">C BLOK</button>
-        <button onclick="adimAtla(1, 2, 'D')">D BLOK</button>
-        <button onclick="adimAtla(1, 2, 'E')">E BLOK</button>
-        <button onclick="adimAtla(1, 2, 'F')">F BLOK</button>
+    <div id="adim1" class="kutu">
+        <span class="sembol">🏢</span>
+        <h1>BLOK SEÇİN</h1>
+        <button onclick="blokSec('A')">A BLOK</button>
+        <button onclick="blokSec('B')">B BLOK</button>
+        <button onclick="blokSec('C')">C BLOK</button>
+        <button onclick="blokSec('D')">D BLOK</button>
+        <button onclick="blokSec('E')">E BLOK</button>
+        <button onclick="blokSec('F')">F BLOK</button>
     </div>
 
-    <div id="adim2" class="adim gizli">
-        <h2 id="blok-yazisi" style="color:#ffcc00;"></h2>
-        <p>Daire Numarasını Yazın:</p>
-        <input type="number" id="daire-input" placeholder="No">
-        <br>
-        <button onclick="daireKaydet()">DAİREYİ ONAYLA</button>
-        <button onclick="iptal()" style="border-color:red; color:red;">VAZGEÇ</button>
+    <div id="adim2" class="kutu gizli">
+        <span class="sembol">🔢</span>
+        <h1 id="blok-baslik"></h1>
+        <h3>Daire No Yazın:</h3>
+        <input type="number" id="daire-input" placeholder="00">
+        <button onclick="daireOnay()">DAİREYİ ONAYLA</button>
+        <button class="vazgec-btn" onclick="başaDön()">← Geri Git</button>
     </div>
 
-    <div id="adim3" class="adim gizli">
-        <h2 id="ozet-yazisi"></h2>
-        <button onclick="final('SU')">💧 SU GÖNDER</button>
-        <button onclick="final('EKMEK')">🍞 EKMEK GÖNDER</button>
-        <br>
-        <button onclick="iptal()" style="border-color:red; color:red;">VAZGEÇ</button>
+    <div id="adim3" class="kutu gizli">
+        <span class="sembol">🛒</span>
+        <h1 id="ozet-baslik"></h1>
+        <h3>Ne Lazım?</h3>
+        <button onclick="siparisVer('SU', '💧')">💧 SU GÖNDER</button>
+        <button onclick="siparisVer('EKMEK', '🍞')">🍞 EKMEK GÖNDER</button>
+        <button class="vazgec-btn" onclick="başaDön()">← İptal Et</button>
     </div>
 
-    <div id="adim4" class="adim gizli">
-        <div id="sonuc">
-            <h2 style="color:#28a745;">SİPARİŞ GİTTİ! ✅</h2>
-            <p id="mesaj-yazisi" style="font-size:22px; margin:15px 0;"></p>
-            <button onclick="location.reload()" style="background:#28a745; color:white; border:none;">YENİ SİPARİŞ VER</button>
-        </div>
+    <div id="adim4" class="kutu gizli">
+        <span class="sembol">✅</span>
+        <h1 style="color:#28a745;">BAŞARILI!</h1>
+        <p id="son-mesaj" style="font-size: 18px; line-height: 1.5;"></p>
+        <button class="tamam-btn" onclick="başaDön()">TAMAM</button>
     </div>
 
     <script>
         let secilenBlok = "";
         let secilenDaire = "";
 
-        // Sayfa açılır açılmaz bildirim izni iste
-        window.onload = function() {
-            if (Notification.permission !== "granted") {
-                Notification.requestPermission();
-            }
-        };
+        // Bildirim İzni İste
+        window.onload = () => { if (Notification.permission !== "granted") Notification.requestPermission(); };
 
-        function adimAtla(suanki, sonraki, veri) {
-            if(veri) secilenBlok = veri;
-            document.getElementById('adim' + suanki).classList.add('gizli');
-            document.getElementById('adim' + sonraki).classList.remove('gizli');
-            if(veri) document.getElementById('blok-yazisi').innerText = veri + " BLOK";
+        function blokSec(b) {
+            secilenBlok = b;
+            document.getElementById('adim1').classList.add('gizli');
+            document.getElementById('adim2').classList.remove('gizli');
+            document.getElementById('blok-baslik').innerText = b + " BLOK";
         }
 
-        function daireKaydet() {
+        function daireOnay() {
             secilenDaire = document.getElementById('daire-input').value;
-            if(!secilenDaire) { alert("Lütfen daire numarasını yazın!"); return; }
-            document.getElementById('ozet-yazisi').innerText = secilenBlok + " Blok Daire " + secilenDaire;
-            adimAtla(2, 3);
+            if(!secilenDaire) { alert("Lütfen numara yazın!"); return; }
+            document.getElementById('adim2').classList.add('gizli');
+            document.getElementById('adim3').classList.remove('gizli');
+            document.getElementById('ozet-baslik').innerText = secilenBlok + " - Daire " + secilenDaire;
         }
 
-        function final(urun) {
-            const tamMesaj = secilenBlok + " Blok No " + secilenDaire + ": " + urun + " İSTİYOR!";
+        function siparisVer(urun, emoji) {
+            const mesaj = secilenBlok + " Blok Daire " + secilenDaire + ": " + urun + " istiyor!";
             
-            // 🔔 BİLDİRİM BURADA TETİKLENİR
+            // 🔔 BİLDİRİM GÖNDER
             if (Notification.permission === "granted") {
-                new Notification("TERRACE PARK SİPARİŞ", {
-                    body: tamMesaj,
-                    icon: "https://cdn-icons-png.flaticon.com/512/3502/3502214.png"
-                });
+                new Notification("YENİ SİPARİŞ!", { body: mesaj, icon: "https://cdn-icons-png.flaticon.com/512/3502/3502214.png" });
             }
 
-            // Ekranda göster
+            // Sonuç Ekranı
             document.getElementById('adim3').classList.add('gizli');
             document.getElementById('adim4').classList.remove('gizli');
-            document.getElementById('mesaj-yazisi').innerText = tamMesaj;
+            document.getElementById('son-mesaj').innerHTML = emoji + " <b>" + urun + "</b> siparişi iletildi.<br>Bildirim gönderildi!";
             
-            // Eski usul garanti uyarı
-            alert("BİLDİRİM GÖNDERİLDİ: " + tamMesaj);
+            // Garanti olması için alert
+            alert("İLETİLDİ: " + mesaj);
         }
 
-        function iptal() {
-            location.reload();
-        }
+        function başaDön() { location.reload(); }
     </script>
 </body>
 </html>
